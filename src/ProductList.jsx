@@ -244,17 +244,17 @@ function ProductList() {
      }));
   };
    const handleCartClick = (e) => {
-    e.preventDefault();
+    e.preventDefault(showCart);
     setShowCart(true); // Set showCart to true when cart icon is clicked
 };
 const handlePlantsClick = (e) => {
-    e.preventDefault();
+    e.preventDefault(showPlants);
     setShowPlants(true); // Set showAboutUs to true when "About Us" link is clicked
     setShowCart(false); // Hide the cart when navigating to About Us
 };
 
    const handleContinueShopping = (e) => {
-    e.preventDefault();
+    e.preventDefault(showCart);
     setShowCart(false);
   };
   
