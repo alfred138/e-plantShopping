@@ -1,41 +1,54 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+    items: [], // Initialize items as an empty array
+    total: 0,
+  };
+
 export const CartSlice = createSlice({
   name: 'cart',
-  initialState: {
-    items: [], // Initialize items as an empty array
-  },
+  initialState,
   reducers: {
-    addItem: (state, action) => {
-        const { name, image, cost } = action.payload;
-        const existingItem = state.items.find(item => item.name === action.payload);
+    addItem: (state, { payload }) => {
+        const { name, image, cost } = payload;
+        const existingItem = state.items.find((item) => item.name === name);
+        state.total++;
         if (existingItem) {
           existingItem.quantity++;
         } else {
-          state.items.push({ name, image, cost, quantity: 1 });
+          state.items.push({
+            name,
+            image,
+            cost: cost.replace("$", ""),
+            quantity: 1,
+          });
         }
       },
-    removeItem: (state, action) => {
-        state.items = state.items.filter(item => item.name !== action.payload);
+    removeItem: (state, { payload }) => {
+        const { name } = payload;
+        state.items = state.items.filter((item) => {
+          if (item.name === name) {
+            state.total -= item.quantity;
+            return false;
+          }
+          return true;
+        });
     },
-    updateQuantity: (state, action) => {
-        const { name, quantity } = action.payload;
-        const itemToUpdate = state.items.find(item => item.name === action.payload);           
-        if (itemToUpdate) {
-            itemToUpdate.quantity += 1;        
+    updateQuantity: (state, { payload }) => {
+        const { name, quantity } = payload;
+        for (let i = 0; i < state.items.length; i++) {
+          const item = state.items[i];
+          if (item.name === name) {
+            state.total += quantity - item.quantity;
+            item.quantity = quantity;
+            break;
+          }
         }
-    },
-     updateQuantityResta: (state, action) => {
-        const { name, quantity } = action.payload;
-        const updateQuantityResta = state.items.find(item => item.name === action.payload);           
-        if (updateQuantityResta) {
-            updateQuantityResta.quantity -= 1;        
-        }
-    },
+      },   
   },
 });
 
-export const { addItem, removeItem, updateQuantity, updateQuantityResta } = CartSlice.actions;
+export const { addItem, removeItem, updateQuantity} = CartSlice.actions;
 
 export default CartSlice.reducer;
 
